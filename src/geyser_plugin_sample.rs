@@ -1,7 +1,7 @@
 /// Main entry for the PostgreSQL plugin
 use solana_geyser_plugin_interface::geyser_plugin_interface::GeyserPlugin;
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub struct GeyserPluginSample {}
 
 impl GeyserPlugin for GeyserPluginSample {
@@ -9,6 +9,13 @@ impl GeyserPlugin for GeyserPluginSample {
         "GeyserPluginSample"
     }
     fn on_unload(&mut self) {}    
+}
+
+
+impl std::fmt::Debug for GeyserPluginSample {
+    fn fmt(&self, _: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        Ok(())
+    }
 }
 
 impl GeyserPluginSample {
