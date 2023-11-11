@@ -8,6 +8,7 @@ impl GeyserPlugin for GeyserPluginSample {
     fn name(&self) -> &'static str {
         "GeyserPluginSample"
     }
+    fn on_unload(&mut self) {}    
 }
 
 impl GeyserPluginSample {
