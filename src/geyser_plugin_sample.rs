@@ -1,4 +1,4 @@
-/// Main entry for the PostgreSQL plugin
+/// Main entry for the Sample plugin
 use solana_geyser_plugin_interface::geyser_plugin_interface::GeyserPlugin;
 
 #[derive(Default)]
@@ -20,7 +20,7 @@ impl std::fmt::Debug for GeyserPluginSample {
 
 impl GeyserPluginSample {
     fn new() -> Self {
-        Self {}
+        Self::default()
     }
 }
 
