@@ -27,7 +27,9 @@ impl GeyserPlugin for GeyserPluginSample {
         Ok(())
     }
 
-    fn on_unload(&mut self) {}
+    fn on_unload(&mut self) {
+        env_logger::init_from_env(env_logger::Env::default().default_filter_or("off"));
+    }
 
     #[allow(unused_variables)]
     fn update_account(
