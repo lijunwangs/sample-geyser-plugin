@@ -1,4 +1,3 @@
-use log::*;
 /// Main entry for the Sample plugin
 use solana_geyser_plugin_interface::geyser_plugin_interface::{
     GeyserPlugin, ReplicaAccountInfoVersions, ReplicaBlockInfoVersions, ReplicaEntryInfoVersions,
@@ -6,6 +5,8 @@ use solana_geyser_plugin_interface::geyser_plugin_interface::{
 };
 
 use solana_sdk::clock::Slot;
+
+use tracing::info;
 
 #[derive(Default)]
 pub struct GeyserPluginSample {}
@@ -16,7 +17,6 @@ impl GeyserPlugin for GeyserPluginSample {
     }
     fn on_load(&mut self, config_file: &str) -> Result<()> {
         // the following code causes unload issue -- the plugin library is not unloaded from the memory
-        solana_logger::setup_with_default("info");
         info!(
             "Loading plugin {:?} from config_file {:?}",
             self.name(),
@@ -26,8 +26,7 @@ impl GeyserPlugin for GeyserPluginSample {
         Ok(())
     }
 
-    fn on_unload(&mut self) {
-    }
+    fn on_unload(&mut self) {}
 
     #[allow(unused_variables)]
     fn update_account(
