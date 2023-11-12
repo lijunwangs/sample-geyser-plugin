@@ -14,8 +14,19 @@ impl GeyserPlugin for GeyserPluginSample {
     fn name(&self) -> &'static str {
         "GeyserPluginSample"
     }
-    fn on_unload(&mut self) {
+    fn on_load(&mut self, config_file: &str) -> Result<()> {
+        // the following code causes unload issue -- the plugin library is not unloaded from the memory
         solana_logger::setup_with_default("info");
+        info!(
+            "Loading plugin {:?} from config_file {:?}",
+            self.name(),
+            config_file
+        );
+
+        Ok(())
+    }
+
+    fn on_unload(&mut self) {
     }
 
     #[allow(unused_variables)]
