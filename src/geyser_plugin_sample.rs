@@ -28,12 +28,12 @@ impl GeyserPlugin for GeyserPluginSample {
     }
 
     fn update_slot_status(&self, slot: u64, parent: Option<u64>, status: SlotStatus) -> Result<()> {
-        info!("Updating slot {slot:?} at with status {status:?} of parent {parent:?}");
+        println!("Updating slot {slot:?} at with status {status:?} of parent {parent:?}");
         Ok(())
     }
 
     fn notify_block_metadata(&self, _blockinfo: ReplicaBlockInfoVersions) -> Result<()> {
-        info!("Got block metadata");
+        println!("Got block metadata");
         Ok(())
     }
 
