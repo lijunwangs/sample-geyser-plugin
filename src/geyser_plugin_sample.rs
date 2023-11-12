@@ -17,7 +17,7 @@ impl GeyserPlugin for GeyserPluginSample {
     }
     fn on_load(&mut self, config_file: &str) -> Result<()> {
         // the following code causes unload issue -- the plugin library is not unloaded from the memory
-        env_logger::init();
+        // env_logger::init();
         info!(
             "Loading plugin {:?} from config_file {:?}",
             self.name(),
@@ -28,7 +28,8 @@ impl GeyserPlugin for GeyserPluginSample {
     }
 
     fn on_unload(&mut self) {
-        env_logger::init_from_env(env_logger::Env::default().default_filter_or("off"));
+        // The following crashes at the exit.
+        // env_logger::init_from_env(env_logger::Env::default().default_filter_or("off"));
     }
 
     #[allow(unused_variables)]
