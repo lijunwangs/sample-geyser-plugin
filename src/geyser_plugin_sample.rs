@@ -1,6 +1,6 @@
+use log::*;
 /// Main entry for the Sample plugin
 use solana_geyser_plugin_interface::geyser_plugin_interface::{GeyserPlugin, Result, SlotStatus};
-use log::*;
 
 #[derive(Default)]
 pub struct GeyserPluginSample {}
@@ -16,7 +16,6 @@ impl GeyserPlugin for GeyserPluginSample {
         Ok(())
     }
 }
-
 
 impl std::fmt::Debug for GeyserPluginSample {
     fn fmt(&self, _: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
