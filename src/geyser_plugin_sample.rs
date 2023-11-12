@@ -14,7 +14,9 @@ impl GeyserPlugin for GeyserPluginSample {
     fn name(&self) -> &'static str {
         "GeyserPluginSample"
     }
-    fn on_unload(&mut self) {}
+    fn on_unload(&mut self) {
+        solana_logger::setup_with_default("info");
+    }
 
     #[allow(unused_variables)]
     fn update_account(
