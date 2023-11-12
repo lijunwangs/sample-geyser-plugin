@@ -6,7 +6,7 @@ use solana_geyser_plugin_interface::geyser_plugin_interface::{
 
 use solana_sdk::clock::Slot;
 
-use tracing::info;
+use log::info;
 
 #[derive(Default)]
 pub struct GeyserPluginSample {}
@@ -17,6 +17,7 @@ impl GeyserPlugin for GeyserPluginSample {
     }
     fn on_load(&mut self, config_file: &str) -> Result<()> {
         // the following code causes unload issue -- the plugin library is not unloaded from the memory
+        env_logger::init();
         info!(
             "Loading plugin {:?} from config_file {:?}",
             self.name(),
