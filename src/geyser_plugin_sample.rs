@@ -1,6 +1,6 @@
 /// Main entry for the Sample plugin
 use solana_geyser_plugin_interface::geyser_plugin_interface::{
-    GeyserPlugin, ReplicaAccountInfoVersions, ReplicaBlockInfoVersions, ReplicaEntryInfoVersions,
+    GeyserPlugin, GeyserPluginError, ReplicaAccountInfoVersions, ReplicaBlockInfoVersions, ReplicaEntryInfoVersions,
     ReplicaTransactionInfoVersions, Result, SlotStatus,
 };
 
@@ -15,8 +15,19 @@ impl GeyserPlugin for GeyserPluginSample {
     fn name(&self) -> &'static str {
         "GeyserPluginSample"
     }
+
+    #[allow(unused_variables)]
+    fn setup_logger(&self, logger: &'static dyn log::Log, level: log::LevelFilter) -> Result<()> {
+        log::set_max_level(level);
+        if let Err(err) = log::set_logger(logger) {
+            return Err(GeyserPluginError::Custom(Box::new(err)));
+        }
+        Ok(())
+    }
+
     fn on_load(&mut self, config_file: &str) -> Result<()> {
         // the following code causes unload issue -- the plugin library is not unloaded from the memory
+        // https://github.com/rust-lang/log/issues/421
         // env_logger::init();
         info!(
             "Loading plugin {:?} from config_file {:?}",
