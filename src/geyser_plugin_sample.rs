@@ -40,9 +40,10 @@ fn do_work(exit_worker: Arc<AtomicBool>, receiver: Receiver<i32>) {
                     info!("Got error {err:?}");
                     break;
                 }
-            }
+            },
         }
     }
+    info!("do_work exited");
 }
 
 impl GeyserPlugin for GeyserPluginSample {
@@ -165,6 +166,15 @@ impl GeyserPluginSample {
             worker: Some(worker),
             exit,
             sender: Some(sender),
+        }
+    }
+}
+
+impl Drop for GeyserPluginSample {
+    fn drop(&mut self) {
+        if let Some(sender) = self.sender.take() {
+            info!("Dropping sender len: {}", sender.len());
+            drop(sender);
         }
     }
 }
