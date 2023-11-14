@@ -1,12 +1,13 @@
 /// Main entry for the Sample plugin
-use solana_geyser_plugin_interface::geyser_plugin_interface::{
-    GeyserPlugin, GeyserPluginError, ReplicaAccountInfoVersions, ReplicaBlockInfoVersions, ReplicaEntryInfoVersions,
-    ReplicaTransactionInfoVersions, Result, SlotStatus,
+use {
+    crossbeam_channel::{bounded, Receiver, RecvTimeoutError, Sender},
+    log::info,
+    solana_geyser_plugin_interface::geyser_plugin_interface::{
+        GeyserPlugin, GeyserPluginError, ReplicaAccountInfoVersions, ReplicaBlockInfoVersions,
+        ReplicaEntryInfoVersions, ReplicaTransactionInfoVersions, Result, SlotStatus,
+    },
+    solana_sdk::clock::Slot,
 };
-
-use solana_sdk::clock::Slot;
-
-use log::info;
 
 #[derive(Default)]
 pub struct GeyserPluginSample {}
@@ -35,6 +36,10 @@ impl GeyserPlugin for GeyserPluginSample {
             config_file
         );
 
+        let (sender, receiver) = bounded(40960);
+        sender.send(5).unwrap();
+        let val = receiver.recv().unwrap();
+        assert!(val == 5);
         Ok(())
     }
 
