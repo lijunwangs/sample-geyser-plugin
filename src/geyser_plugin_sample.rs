@@ -11,7 +11,6 @@ use {
         sync::{
             atomic::{AtomicBool, Ordering},
             Arc,
-            Once,
         },
         thread::{Builder, JoinHandle},
         time::Duration,
@@ -90,12 +89,10 @@ impl GeyserPlugin for GeyserPluginSample {
         is_startup: bool,
     ) -> Result<()> {
         info!("Got account notification");
-        static INIT: Once = Once::new();
-        INIT.call_once(|| {
-            if let Some(sender) = &self.sender {
-                sender.send(slot as i32).unwrap();
-            }
-        });
+        // The moment we use cross_beam send, it will cause unload issue
+        if let Some(sender) = &self.sender {
+            sender.send(slot as i32).unwrap();
+        }
         Ok(())
     }
 
