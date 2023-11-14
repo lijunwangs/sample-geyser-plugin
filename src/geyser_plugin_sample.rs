@@ -162,6 +162,7 @@ impl GeyserPluginSample {
             })
             .unwrap();
 
+        sender.send(2).unwrap();
         Self {
             worker: Some(worker),
             exit,
