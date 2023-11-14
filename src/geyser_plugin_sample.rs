@@ -7,10 +7,43 @@ use {
         ReplicaEntryInfoVersions, ReplicaTransactionInfoVersions, Result, SlotStatus,
     },
     solana_sdk::clock::Slot,
+    std::{
+        sync::{
+            atomic::{AtomicBool, Ordering},
+            Arc,
+        },
+        thread::{Builder, JoinHandle},
+        time::Duration,
+    },
 };
 
 #[derive(Default)]
-pub struct GeyserPluginSample {}
+pub struct GeyserPluginSample {
+    worker: Option<JoinHandle<()>>,
+    exit: Arc<AtomicBool>,
+    sender: Option<Sender<i32>>,
+}
+
+fn do_work(exit_worker: Arc<AtomicBool>, receiver: Receiver<i32>) {
+    while !exit_worker.load(Ordering::Relaxed) {
+        let work = receiver.recv_timeout(Duration::from_millis(500));
+        match work {
+            Ok(work) => {
+                info!("Got work {work}");
+            }
+            Err(err) => match err {
+                RecvTimeoutError::Timeout => {
+                    info!("Timed out");
+                    continue;
+                }
+                _ => {
+                    info!("Got error {err:?}");
+                    break;
+                }
+            }
+        }
+    }
+}
 
 impl GeyserPlugin for GeyserPluginSample {
     fn name(&self) -> &'static str {
@@ -35,17 +68,16 @@ impl GeyserPlugin for GeyserPluginSample {
             self.name(),
             config_file
         );
-
-        let (sender, receiver) = bounded(40960);
-        sender.send(5).unwrap();
-        let val = receiver.recv().unwrap();
-        assert!(val == 5);
         Ok(())
     }
 
     fn on_unload(&mut self) {
         // The following crashes at the exit.
         // env_logger::init_from_env(env_logger::Env::default().default_filter_or("off"));
+        self.exit.store(true, Ordering::Relaxed);
+        if let Some(worker) = self.worker.take() {
+            worker.join().unwrap();
+        }
     }
 
     #[allow(unused_variables)]
@@ -56,6 +88,9 @@ impl GeyserPlugin for GeyserPluginSample {
         is_startup: bool,
     ) -> Result<()> {
         info!("Got account notification");
+        if let Some(sender) = &self.sender {
+            sender.send(slot as i32).unwrap();
+        }
         Ok(())
     }
 
@@ -116,7 +151,21 @@ impl std::fmt::Debug for GeyserPluginSample {
 
 impl GeyserPluginSample {
     fn new() -> Self {
-        Self::default()
+        let (sender, receiver) = bounded(40960);
+        let exit = Arc::new(AtomicBool::default());
+        let exit_clone = exit.clone();
+        let worker = Builder::new()
+            .name(format!("sample"))
+            .spawn(move || -> () {
+                do_work(exit_clone, receiver);
+            })
+            .unwrap();
+
+        Self {
+            worker: Some(worker),
+            exit,
+            sender: Some(sender),
+        }
     }
 }
 
