@@ -89,9 +89,9 @@ impl GeyserPlugin for GeyserPluginSample {
         is_startup: bool,
     ) -> Result<()> {
         info!("Got account notification");
-        if let Some(sender) = &self.sender {
-            sender.send(slot as i32).unwrap();
-        }
+        // if let Some(sender) = &self.sender {
+        //     sender.send(slot as i32).unwrap();
+        // }
         Ok(())
     }
 
